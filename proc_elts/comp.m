@@ -46,10 +46,10 @@ function [y] = comp(x,tsamp,knobs)
 	% Envelope Detection
 	switch env_type
 		case 'peak'
-			x_env = pk_det(x,att,rel);
+			x_env = pk_det(x,tsamp,rel);
 
 		case 'rms'
-			x_env = rms_det(x,att,rel);
+			x_env = rms_det(x,tsamp,rel);
 
 		otherwise
 			error('env_type should be either "peak" or "rms"');
@@ -74,17 +74,6 @@ function [y] = comp(x,tsamp,knobs)
 	gain 	= 10.^(gain_db./20);
 
 	y = x.*gain;
-
-end
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% pk_det: implements peak detector
-function [y] = pk_det(x,att,rel)
-
-	x = abs(x);
 
 end
 
