@@ -2,18 +2,23 @@ clear all
 
 run('../always.m');
 
+%%%%%%%%
+% DUT settings
 
 thresh 		= -6;
 ratio 		= 3;
 att 		= 10e-3;
-rel 		= 40e-3;
+rel 		= 100e-3/2;
 env_type 	= 'peak';
 
 
 
 
+%%%%%%%%
+% Test Vector settings
+
 sig_type = 'pink';
-sig_type = 'sine';
+% sig_type = 'sine';
 
 fs 		= 48e6;
 tsamp 	= 1/fs;
@@ -33,10 +38,13 @@ knobs = struct(	'thresh',thresh, 'ratio',ratio, 'att',att, ...
 
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 %%%%%%%%
 % Generate test vector
 
-% Sine wave
 ttrans_ptr 	= round(ttrans./tsamp);
 seg_len 	= diff([0 ttrans_ptr Nsamp]);
 
@@ -56,7 +64,7 @@ for ii = 1:length(seg_len)
 		case 'pink'
 			% Pink Noise
 			H = dsp.ColoredNoise('SamplesPerFrame',seg_len(ii));
-			seg = a0.*step(H)';
+			seg = a0.*step(H)'./8;
 
 		otherwise
 			error('Signal type must be either "sine" or "pink"');
@@ -75,9 +83,15 @@ end
 
 %%%%%%%%
 % test things
+
 y = comp(xtest,tsamp,knobs);
 
 
+
+
+
+%%%%%%%%
+% plot things
 
 figure(1);
 plot(t,abs(xtest));
