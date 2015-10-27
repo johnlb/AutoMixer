@@ -8,7 +8,7 @@ run('../always.m');
 thresh 		= -6;
 ratio 		= 3;
 att 		= 10e-3;
-rel 		= 100e-3/2;
+rel 		= 100e-3/4;
 env_type 	= 'peak';
 
 
@@ -18,7 +18,7 @@ env_type 	= 'peak';
 % Test Vector settings
 
 sig_type = 'pink';
-% sig_type = 'sine';
+sig_type = 'sine';
 
 fs 		= 48e6;
 tsamp 	= 1/fs;

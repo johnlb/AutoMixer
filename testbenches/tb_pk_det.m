@@ -3,7 +3,7 @@ clear all
 run('../always.m');
 
 sig_type = 'pink';
-% sig_type = 'sine';
+sig_type = 'sine';
 
 fs 		= 48e6;
 tsamp 	= 1/fs;

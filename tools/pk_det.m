@@ -11,6 +11,7 @@ function [y] = pk_det(x,tsamp,tau)
 
 	nsamp 		= length(x);
 
+
 	x = abs(x);
 
 
@@ -21,7 +22,7 @@ function [y] = pk_det(x,tsamp,tau)
 
 	% Create decay shape LUT
 	max_seglen 		= nsamp;
-	decay_kernel 	= exp(-(tsamp/tau).*(0:max_seglen-1));
+	decay_kernel 	= exp(-(tsamp/(2*tau)).*(0:max_seglen-1));
 
 	% init loop
 	y 				= zeros(size(x));
