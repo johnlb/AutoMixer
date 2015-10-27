@@ -1,51 +1,48 @@
-clear all
+%%% hello.
+
+run('../../always.m');
+init_hotelcalifornia();
 
 
-fs 		= 48e6;
-tsamp 	= 1/fs;
-Ttot 	= 0.01;
-ampv 	= [-20 -1 -20];
-ttrans 	= [Ttot/4 Ttot/2];
-ftest 	= 1e3;
+w = inv(x'*x)*x'*t;
+
+y = x*w;
 
 
-
-Nsamp 	= round(Ttot/tsamp);
-Ttot 	= tsamp*Nsamp;
-t 		= linspace(0,Ttot,Nsamp);
+ky = 22.5;
+kt = 1/2.74;
 
 
+straight_pan = [ones(1,9); ones(1,9)]';
+straight_pan(2,2) = 0;	% Stereo Track
+straight_pan(3,1) = 0;
+straight_pan(4,2) = 0;	% Stereo Track
+straight_pan(5,1) = 0;
+straight_pan(8,2) = 0;	% Stereo Track
+straight_pan(9,1) = 0;
 
-%%%%%%%%
-% Generate test vector
-ttrans_ptr 	= round(ttrans./tsamp);
-seg_len 	= diff([0 ttrans_ptr Nsamp]);
 
-t0 = 0;
-xtest = [];
-for ii = 1:length(seg_len)
-
-	thisSeg = seg_len(ii);
-	a0 = 10^(ampv(ii)/20);
-
-	tseg = t0 + (0:tsamp:(thisSeg-1)*tsamp);
-	seg = a0.*sin(2*pi*ftest.*tseg);
-
-	xtest = [xtest seg];
-
-	t0 = thisSeg*tsamp;
-end
+y_ = x(:,1:7)*straight_pan(1:7,:);
 
 
 
-%%%%%%%%
-% test things
-y = toyfn(xtest,tsamp,10e-3,100e-3);
 
 
+%%%%%
+% Plot stuff
+
+win = round([54 60]/ts);
+% win = round([2*60 2*60+10]/ts);
+win = win(1):win(2);
 
 figure(1);
-plot(t,abs(xtest));
-hold all;
-plot(t,y);
-hold off;
+
+subplot(211);
+plot(win*ts, x(win,7));
+% plot(win*ts, y(win)*ky);
+ylim([-1 1]);
+
+subplot(212);
+plot(win*ts, t(win,1));
+% plot(win*ts, t(win)*kt);
+ylim([-1 1]);
