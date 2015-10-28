@@ -15,7 +15,8 @@ run('../../always.m');
 
 
 fileext 	= '.mp3';
-filenames 	= {'MASTER', 'Bass', 'Guitar', 'Hat', 'Kick', 'Snare', 'Vox_Guitar'};
+% filenames 	= {'MASTER', 'Bass', 'Guitar', 'Hat', 'Kick', 'Snare', 'Vox_Guitar'};
+filenames 	= {'MASTER', 'Kick', 'Snare', 'Hat', 'Bass', 'Guitar', 'Vox_Guitar'};
 jj			= 1;
 for ii = 1:length(filenames)
 
@@ -41,7 +42,7 @@ ts = 1/fs;
 
 
 % Time align master track to other tracks.
-x = time_align(x,ts, [51.609 52.510], [54.178 55.230], 9);
+x = time_align(x,ts, [51.609 52.510], [54.178 55.230], 4);
 
 
 % Zero pad end of master track s.t. all lengths line up.
@@ -49,6 +50,13 @@ N 	= length(x{3});
 N_ 	= length(x{1});
 x{1} = [x{1}; zeros(N-N_,1)];
 x{2} = [x{2}; zeros(N-N_,1)];
+
+
+
+
+dn = 130;
+x{3} = [x{3}(dn+1:end); zeros(dn,1)];
+
 
 
 
