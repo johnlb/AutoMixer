@@ -4,7 +4,7 @@ clear sandbox
 run('../../always.m');
 init_hotelcalifornia();
 
-win = get_win_ind([50 51],ts);
+win = get_win_ind([10 11],ts);
 
 
 N = length(x(win));
