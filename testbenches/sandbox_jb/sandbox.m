@@ -4,67 +4,130 @@ clear sandbox
 run('../../always.m');
 init_hotelcalifornia();
 
-win = get_win_ind([50 51],ts);
 
 
-N = length(x(win));
-M = size(x,2);
+% 1st bass note
+win = get_win_ind([3.214 6.513],ts);
+win = get_win_ind([3.214 6.513] + [-0.1 0],ts);
+% win = get_win_ind([3.214 6.513] + [-0.1 0.1],ts);
+
+% 2nd bass note
+win = get_win_ind([6.515 9.715],ts);
+win = get_win_ind([6.515 9.715] + [-0.1 0],ts);
+
+% 3nd bass note
+win = get_win_ind([9.718 12.979],ts);
+win = get_win_ind([9.718 12.979] + [-0.1 0],ts);
 
 
-FRAME_LENGTH = round(10e-3/ts);
-frame = 0:FRAME_LENGTH-1;
 
-
-alpha = [];
-% for ii = 1:M
-% 	alpha{ii} = [];
-% end
-NFRAMES = floor(N/FRAME_LENGTH);
-% frame_starts = (1:FRAME_LENGTH:N-FRAME_LENGTH)+win(1)-1;
-frame_starts = win(1) + (0:NFRAMES-1).*FRAME_LENGTH;
-W = exp(-(frame-FRAME_LENGTH/2).^2/(2*200*FRAME_LENGTH));
-W = diag(W);
-for ii = 1:NFRAMES
-	frame_index = floor( (ii-1)/FRAME_LENGTH )+1;
-	thisFrame = frame_starts(ii)+frame;
-		y_ = t(thisFrame,1);
-		x_ = x(thisFrame,:);
-		nodata = ~any(x_,1);
-		x_(:,nodata) = [];
-		% alpha_(nodata) = [];
-		alpha_ = inv(x_'*W*x_)*x_'*W*y_;
-		% alpha_ = inv(x_'*x_)*x_'*y_;
-		% alpha_ = lsqnonneg(x_,y_);
-		alpha__ = zeros(1,M);
-		alpha__(~nodata) = alpha_';
-		alpha = [alpha; alpha__];
-
-end
-
+L = length(win);
 
 
 figure(1);
-% for ii = 1:10
-% for ii = 1:size(alpha{1},1)
-% 	fi = ii;
-% 	loc = (fi-1)*FRAME_LENGTH+1;
-% 	thisFrame = loc+frame;
-	for jj = 1:M
-		subplot(ceil(M/2),2,jj);
-		scatter(1:NFRAMES,alpha(:,jj));
-		% ylim([-10 +10]);
-% 	hold all;
-	end
-% end
-% hold off;
+
+xc1 = xcorr(x(win,5), t(win,1));
+temp = find(abs(xc1)==max(abs(xc1)))-L;
+dn1 = temp(1)
+subplot(321);
+plot(xc1);
+
+dx1 = dn1;
+px1 = xc1(dn1+L)/abs(xc1(dn1+L));
+
+
+xc2 = xcorr(x(win,5), t(win,2));
+temp = find(abs(xc2)==max(abs(xc2)))-L;
+dn2 = temp(1)
+subplot(322);
+plot(xc2);
+
+xc1 = xcorr(x(win,6), t(win,1));
+temp = find(abs(xc1)==max(abs(xc1)))-L;
+dn1 = temp(1)
+subplot(323);
+plot(xc1);
+
+dx2 = dn1;
+px2 = xc1(dn1+L)/abs(xc1(dn1+L));
+
+xc2 = xcorr(x(win,6), t(win,2));
+temp = find(abs(xc2)==max(abs(xc2)))-L;
+dn2 = temp(1)
+subplot(324);
+plot(xc2);
+
+xc1 = xcorr(x(win,7), t(win,1));
+temp = find(abs(xc1)==max(abs(xc1)))-L;
+dn1 = temp(1)
+subplot(325);
+plot(xc1);
+
+
+xc2 = xcorr(x(win,7), t(win,2));
+temp = find(abs(xc2)==max(abs(xc2)))-L;
+dn2 = temp(1)
+subplot(326);
+plot(xc2);
+
+dx3 = dn2;
+px3 = xc2(dn2+L)/abs(xc2(dn2+L));
+
+
+
+
+x1 = x(win+dx1,5)*px1;
+x2 = x(win+dx2,6)*px2;
+x3 = x(win+dx3,7)*px3;
+
+t1 = t(win,1);
+t2 = t(win,2);
+
+
 
 
 figure(2);
-for jj = 1:M
-	subplot(ceil(M/2),2,jj);
-	plot(x(win(1):win(1)+450,jj));
-end
+ax1 = subplot(311);
+plot(x2);
+ax2 = subplot(312);
+plot(t1);
+ax3 = subplot(313);
+plot(t2);
 
+linkaxes([ax1,ax2,ax3],'x');
+
+
+
+%% Try constant alpha
+
+A = [x1 x2 x3];
+alpha1 = t1\A;
+alpha2 = t2\A;
+
+
+y1 = A*alpha1';
+y2 = A*alpha2';
 
 figure(3);
-plot(t(win(1):win(1)+450,1))
+ax1 = subplot(411);
+plot(y1);
+ax2 = subplot(412);
+plot(y2);
+ax3 = subplot(413);
+plot(t1);
+ax4 = subplot(414);
+plot(t2);
+
+linkaxes([ax1,ax2,ax3,ax4],'x');
+
+
+
+%% Look at freq domain
+FFT_LEN = 1024;
+OVERLAP = FFT_LEN/4;
+dt 		= (FFT_LEN-OVERLAP)*ts;
+t_stft 	= 0:dt:(L-FFT_LEN);
+
+X1 = STFT(x1,FFT_LEN,OVERLAP);
+X2 = STFT(x1,FFT_LEN,OVERLAP);
+X3 = STFT(x1,FFT_LEN,OVERLAP);
