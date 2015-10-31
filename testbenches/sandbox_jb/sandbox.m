@@ -4,6 +4,10 @@ clear sandbox
 run('../../always.m');
 init_hotelcalifornia();
 
+<<<<<<< HEAD
+=======
+win = get_win_ind([10 11],ts);
+>>>>>>> 5318f9b05c967f0969e955e2606973d474703efa
 
 
 % 1st bass note
