@@ -84,7 +84,7 @@ px3 = xc2(dn2+L)/abs(xc2(dn2+L));
 
 % dx1 = 0;
 % dx2 = 0;
-dx3 = -100;
+% dx3 = 40;
 
 x1 = x(win+dx1,5)*px1;
 x2 = x(win+dx3,6)*px2;
@@ -103,7 +103,7 @@ t2 = t(win,2);
 
 %%%%%%%%%%%%%%
 % Calc RMS
-nwin = round(01e-3/ts);
+nwin = round(0.2e-3/ts);
 
 x1_rms = ampl2rms(x1,nwin);
 x2_rms = ampl2rms(x2,nwin);
