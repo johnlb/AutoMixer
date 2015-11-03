@@ -1,5 +1,5 @@
 %% time_align: zero-pads the master tracks s.t. they line up in time with orig. tracks.
-function [y] = time_align(x,ts, window1,window2, track_index2)
+function [y] = time_align_hc(x,ts, window1,window2, track_index2)
 
 
 %%%%%%

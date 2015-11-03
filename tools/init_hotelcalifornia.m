@@ -1,5 +1,7 @@
 % Don't reload data every time you run the thing.
-clearvars -except x t x_names fs ts DATA_LOADED
+clearvars -except x t x_names fs ts DATA_LOADED thispath
+run([thispath 'always.m']);
+
 
 if (~exist('DATA_LOADED'))
 	DATA_LOADED = 'hotel_california';

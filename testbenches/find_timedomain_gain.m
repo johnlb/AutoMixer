@@ -1,5 +1,5 @@
 %%% hello.
-clear sandbox
+clear find_timedomain_gain
 
 run('../always.m');
 init_hotelcalifornia();
@@ -11,22 +11,23 @@ init_hotelcalifornia();
 % at a time, for now.
 
 
-% 1st bass note
-win = get_win_ind([3.214 6.513],ts);
-win = get_win_ind([3.214 6.513] + [-0.1 0],ts);
-% win = get_win_ind([3.214 6.513] + [-0.1 0.1],ts);
+%%% 1st bass note
+chunk = chunk_class(3.214-0.1, 6.513, ts, 1);
 
-% % 2nd bass note
-% win = get_win_ind([6.515 9.715],ts);
-% win = get_win_ind([6.515 9.715] + [-0.1 0],ts);
+%%% 2nd bass note
+% chunk = chunk_class(6.515-0.1, 9.715, ts, 1);
 
-% % 3nd bass note
-% win = get_win_ind([9.718 12.979],ts);
-% win = get_win_ind([9.718 12.979] + [-0.1 0],ts);
+%%% 3nd bass note
+% chunk = chunk_class(9.718-0.1, 12.979, ts, 1);
 
 
-
+win = chunk.get_win_ind();
 L = length(win);
+
+
+
+
+
 
 
 %%%%%%%%%%%%%
@@ -37,75 +38,13 @@ L = length(win);
 %	individually, to correct
 % 	for small timing drift
 
-xc1 = xcorr(x(win,5), t(win,1));
-temp = find(abs(xc1)==max(abs(xc1)))-L;
-dn1 = temp(1);
-% subplot(321);
-% plot(xc1);
+[x_ t_] = chunk.get_aligned_data(x(:,5:7),t);
+x1 = x_(:,1);
+x2 = x_(:,2);
+x3 = x_(:,3);
 
-dx1 = dn1+1;
-px1 = xc1(dn1+L)/abs(xc1(dn1+L));
-
-
-xc2 = xcorr(x(win,5), t(win,2));
-temp = find(abs(xc2)==max(abs(xc2)))-L;
-dn2 = temp(1);
-% subplot(322);
-% plot(xc2);
-
-% dx1 = dn2;
-% px1 = xc2(dn2+L)/abs(xc2(dn2+L));
-
-xc1 = xcorr(x(win,6), t(win,1));
-temp = find(abs(xc1)==max(abs(xc1)))-L;
-dn1 = temp(1);
-% subplot(323);
-% plot(xc1);
-
-dx2 = dn1+1;
-px2 = xc1(dn1+L)/abs(xc1(dn1+L));
-
-
-xc2 = xcorr(x(win,6), t(win,2));
-temp = find(abs(xc2)==max(abs(xc2)))-L;
-dn2 = temp(1);
-% subplot(324);
-% plot(xc2);
-
-% dx2 = dn2+1;
-% px2 = xc2(dn2+L)/abs(xc2(dn2+L));
-
-
-xc1 = xcorr(x(win,7), t(win,1));
-temp = find(abs(xc1)==max(abs(xc1)))-L;
-dn1 = temp(1);
-% subplot(325);
-% plot(xc1);
-
-
-xc2 = xcorr(x(win,7), t(win,2));
-temp = find(abs(xc2)==max(abs(xc2)))-L;
-dn2 = temp(1);
-% subplot(326);
-% plot(xc2);
-
-dx3 = dn2+1;
-px3 = xc2(dn2+L)/abs(xc2(dn2+L));
-
-
-% dx1 = 0;
-% dx2 = 0;
-% dx3 = 40;
-
-x1 = x(win+dx1,5)*px1;
-x2 = x(win+dx3,6)*px2;
-x3 = x(win+dx3,7)*px3;
-
-t1 = t(win,1);
-t2 = t(win,2);
-
-
-
+t1 = t_(:,1);
+t2 = t_(:,2);
 
 
 
@@ -193,12 +132,12 @@ x3(L+1:end) = [];
 t1(L+1:end) = [];
 t2(L+1:end) = [];
 
-
 x1_rms(L+1:end) = [];
 x2_rms(L+1:end) = [];
 x3_rms(L+1:end) = [];
 t1_rms(L+1:end) = [];
 t2_rms(L+1:end) = [];
+
 
 
 if (size(alpha2,2) == 3)

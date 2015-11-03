@@ -1,6 +1,6 @@
 %% readin_hotelcalifornia: reads all data for hotel california and preps it.
 function [x, y, x_names, fs] = readin_hotelcalifornia()
-run('../../always.m');
+run('../always.m');
 
 
 % if (~exist('LOADED_DATA'))
@@ -42,7 +42,7 @@ ts = 1/fs;
 
 
 % Time align master track to other tracks.
-x = time_align(x,ts, [51.609 52.510], [54.178 55.230], 4);
+x = time_align_hc(x,ts, [51.609 52.510], [54.178 55.230], 4);
 
 
 % Zero pad end of master track s.t. all lengths line up.
