@@ -6,7 +6,7 @@ run([thispath 'always.m']);
 if (~exist('DATA_LOADED'))
 	DATA_LOADED = 'hotel_california';
 
-	[x t x_names fs] = readin_hotelcalifornia();
+	[x t x_names fs] = readin_hotelcalifornia(DATA_PATH);
 	ts = 1/fs;
 
 	dn = 589;

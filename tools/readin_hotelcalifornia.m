@@ -1,6 +1,5 @@
 %% readin_hotelcalifornia: reads all data for hotel california and preps it.
-function [x, y, x_names, fs] = readin_hotelcalifornia()
-run('../always.m');
+function [x, y, x_names, fs] = readin_hotelcalifornia(DATA_PATH)
 
 
 % if (~exist('LOADED_DATA'))
