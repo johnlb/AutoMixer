@@ -23,8 +23,5 @@ function [ coef_L,coef_R ] = find_coef_fixed(x, t, window_length)
             coef_R = horzcat(coef_R,regress(y_R, temp));
         end
     end
-
-
-    disp('End Computation')
 end
 
