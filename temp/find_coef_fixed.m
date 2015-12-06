@@ -8,19 +8,12 @@ function [ coef_L,coef_R ] = find_coef_fixed(x, t, window_length)
         if(rank(temp) >= size(x,2))
             y_L = t(1 + i * window_length:(i + 1) * window_length ,1);
             y_R = t(1 + i * window_length: (i + 1) * window_length,2);
-            coef_L(:,i) = LSS.CFS(temp, y_L);
-            coef_R(:,i) = LSS.CFS(temp, y_R);
-        end
-    end
-
-    if(row_n * window_length < length(x))
-        temp = x(length(x) - window_length + 1: end,:);
-        if(rank(temp) > size(x,2))
-            y_L = t(length(x) - window_length + 1: end,1);
-            y_R = t(length(x) - window_length + 1: end,2);
-        
-            coef_L = horzcat(coef_L,regress(y_L, temp));
-            coef_R = horzcat(coef_R,regress(y_R, temp));
+            temp_L = LSS.CFS(temp, y_L);
+            temp_R = LSS.CFS(temp, y_R);
+            for k = 1:window_length
+                coef_L(:,i*window_length + k) = temp_L;
+                coef_R(:,i*window_length + k) = temp_R;
+            end
         end
     end
 end
