@@ -1,5 +1,5 @@
 
-%{
+
 run('../always.m');
 init_hotelcalifornia();
 
@@ -8,7 +8,7 @@ chunk = chunk_class(3.214-0.1, 6.513, ts, 1);
 win = chunk.get_win_ind();
 L = length(win);
 
-[x_new t_new] = chunk.get_aligned_data(x(:,5:7),t);
+[x_new t_new] = chunk.get_aligned_data(x(:,4:7),t);
 
 nwin = round(0.2e-3/ts);
 
@@ -24,38 +24,39 @@ for i = 1:size(t_new,2)
     t_rms = horzcat(t_rms, ampl2rms(t_new(:,i), nwin));
 end
 
+%constant error
+x_rms_error = horzcat(x_rms, ones(L,1));
+%mgn white noise
+p = 0;
+x_rms_white = horzcat(x_rms, wgn(L,1,p));
+%boostrap
+e_idx = find(sum(x_rms,2) == 0);
 
-%}
-%LWL
-win = 9;
-mu = ceil(win/2);
-sigma = win/30;
-row_n = floor(length(x_rms) / win);
-coef_L = zeros(size(x_rms,2),row_n);
-coef_R = zeros(size(x_rms,2),row_n);
-weight = ((1:win) - mu).^2 / (2 * sigma^2);
-weight = exp(-weight);
-r = diag(weight);
-for i = 0:(row_n - 1)
-    temp = x_rms(1 + i * win: (i + 1) * win,:);
-    a = temp' * r * temp;
-    if(rank(a) >= size(x_rms,2))
-        y_L = t(1 + i * win:(i + 1) * win ,1);
-        y_R = t(1 + i * win: (i + 1) * win,2);
-        temp_L =  a\(temp' * r * y_L);
-        temp_R =  a\(temp' * r * y_R);
-        coef_L(:,i + 1) = temp_L;
-        coef_R(:,i + 1) = temp_R;
-    end
-end
+b_error = t_rms(e_idx,:);
+b_error = b_error(b_error ~= 0);
 
-x_pre = x_rms(floor(win/2) + (0:row_n - 1) * win,:);
-t_test = t_rms(floor(win/2) + (0:row_n - 1) * win,1);
-t_pre = sum(x_pre .* transpose(coef_L),2);
 
+
+b_idx = ceil(rand(1, length(x_rms)) * length(b_error));
+x_rms_boot = horzcat(x_rms, b_error(b_idx));
+t_rms_boot = t_rms - repmat(b_error(b_idx), 1,2);
+
+
+%###########################################################
+M = 3000;
+[A1, B1] = cal_plot(x_rms, t_rms, M, 0, 'without noise term');
+[A2, B2] = cal_plot(x_rms_error, t_rms, M,0, 'with constant noise term');
+[A3, B3] = cal_plot(x_rms_white, t_rms, M,0, 'with white noise term');
+[A4, B4] = cal_plot(x_rms_boot, t_rms,M,0, 'with bootstrap noise term');
+[A5, B5] =cal_plot(x_rms, t_rms_boot,M,1, 'substract noise term from output');
 figure
-plot(floor(win/2) + (0:row_n - 1) * win, t_test, '-'); 
+plot(A1(2,:), 'r-');
 hold on 
-plot(floor(win/2) + (0:row_n - 1) * win, t_pre, '-');
-
-
+plot(A2(2,:)),'g-';
+hold on 
+plot(A3(2,:),'y-');
+hold on 
+plot(A4(2,:),'k-');
+hold on 
+plot(A5(2,:),'b-');
+legend('no noise','constant', 'white', 'boot','boot_sub', 'Location','northwest');

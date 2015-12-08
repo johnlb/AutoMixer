@@ -1,0 +1,192 @@
+
+
+run('../always.m');
+init_hotelcalifornia();
+
+%align
+chunk = chunk_class(3.214-0.1, 6.513, ts, 1);
+win = chunk.get_win_ind();
+L = length(win);
+
+[x_new t_new] = chunk.get_aligned_data(x(:,5:7),t);
+
+nwin = round(0.2e-3/ts);
+
+%get rms
+x_rms = [];
+t_rms = [];
+
+for i = 1:size(x_new,2)
+    x_rms = horzcat(x_rms, ampl2rms(x_new(:,i), nwin));
+end
+
+for i = 1:size(t_new,2)
+    t_rms = horzcat(t_rms, ampl2rms(t_new(:,i), nwin));
+end
+
+%constant error
+x_rms_error = horzcat(x_rms, ones(L,1));
+%mgn white noise
+p = 0;
+x_rms_white = horzcat(x_rms, wgn(L,1,p));
+%boostrap
+e_idx = find(sum(x_rms,2) == 0);
+
+b_error = t_rms(e_idx,:);
+b_error = b_error(b_error ~= 0);
+
+
+
+b_idx = ceil(rand(1, length(x_rms)) * length(b_error));
+x_rms_boot = horzcat(x_rms, b_error(b_idx));
+t_rms_boot = t_rms - repmat(b_error(b_idx), 1,2);
+
+
+
+M = 3000;
+cal_plot(x_rms, t_rms, M, 1);
+cal_plot(x_rms_error, t_rms, M,1);
+cal_plot(x_rms_white, t_rms, M,1);
+cal_plot(x_rms_boot, t_rms,M,1);
+cal_plot(x_rms, t_rms_boot,M,1);
+%{
+row_n = floor(L/M);
+coef_L= zeros(size(x_rms,2),row_n * M);
+coef_R = zeros(size(x_rms,2),row_n * M);
+
+for i = 0:(row_n - 1)
+    idx = 1 + i * M: (i + 1) * M;
+    temp = x_rms(idx,:);
+    y_L = t_rms(idx ,1);
+    y_R = t_rms(idx,2);
+    coef_L(:,idx) = repmat(temp\y_L,1,M);
+    coef_R(:,idx) = repmat(temp\y_R,1,M);
+end
+
+
+M = 3000;
+row_n = floor(L/M);
+coef_L_error= zeros(size(x_rms_error,2),row_n * M);
+coef_R_error = zeros(size(x_rms_error,2),row_n * M);
+
+for i = 0:(row_n - 1)
+    idx = 1 + i * M: (i + 1) * M;
+    temp = x_rms_error(idx,:);
+    y_L = t_rms(idx ,1);
+    y_R = t_rms(idx,2);
+    coef_L_error(:,idx) = repmat(temp\y_L,1,M);
+    coef_R_error(:,idx) = repmat(temp\y_R,1,M);
+end
+
+M = 3000;
+row_n = floor(L/M);
+coef_L_white= zeros(size(x_rms_white,2),row_n * M);
+coef_R_white = zeros(size(x_rms_white,2),row_n * M);
+
+for i = 0:(row_n - 1)
+    idx = 1 + i * M: (i + 1) * M;
+    temp = x_rms_white(idx,:);
+    y_L = t_rms(idx ,1);
+    y_R = t_rms(idx,2);
+    coef_L_white(:,idx) = repmat(temp\y_L,1,M);
+    coef_R_white(:,idx) = repmat(temp\y_R,1,M);
+end
+
+M = 3000;
+row_n = floor(L/M);
+coef_L_boot= zeros(size(x_rms_boot,2),row_n * M);
+coef_R_boot = zeros(size(x_rms_boot,2),row_n * M);
+
+for i = 0:(row_n - 1)
+    idx = 1 + i * M: (i + 1) * M;
+    temp = x_rms_boot(idx,:);
+    y_L = t_rms(idx ,1);
+    y_R = t_rms(idx,2);
+    coef_L_boot(:,idx) = repmat(temp\y_L,1,M);
+    coef_R_boot(:,idx) = repmat(temp\y_R,1,M);
+end
+
+figure
+subplot(2,2,1)
+plot(coef_L(1,:), '-');
+ylim([-5 5])
+hold on 
+plot(coef_R(1,:), 'r-');
+title('with no error term')
+subplot(2,2,2)
+plot(coef_L(2,:), '-');
+ylim([-5 5])
+hold on
+
+plot(coef_R(2,:), 'r-');
+subplot(2,2,3)
+plot(coef_L(3,:));
+ylim([-5 5])
+hold on 
+plot(coef_R(3,:), 'r-');
+
+%constant noise
+figure
+subplot(2,2,1)
+plot(coef_L_error(1,:), '-');
+ylim([-5 5])
+hold on 
+plot(coef_R_error(1,:), 'r-');
+title('with constant error term ')
+
+subplot(2,2,2)
+plot(coef_L_error(2,:), '-');
+ylim([-5 5])
+hold on
+plot(coef_R_error(2,:), 'r-');
+
+
+subplot(2,2,3)
+plot(coef_L_error(3,:),'-');
+ylim([-5 5])
+hold on 
+plot(coef_R_error(3,:), 'r-');
+
+%white noise
+figure
+subplot(2,2,1)
+plot(coef_L_white(1,:), '-');
+ylim([-5 5])
+hold on 
+plot(coef_R_white(1,:), 'r-');
+title('with white noise term ')
+
+subplot(2,2,2)
+plot(coef_L_white(2,:), '-');
+ylim([-5 5])
+hold on
+plot(coef_R_white(2,:), 'r-');
+
+
+subplot(2,2,3)
+plot(coef_L_white(3,:),'-');
+ylim([-5 5])
+hold on 
+plot(coef_R_white(3,:), 'r-');
+%white boot
+figure
+subplot(2,2,1)
+plot(coef_L_boot(1,:), '-');
+ylim([-5 5])
+hold on 
+plot(coef_R_boot(1,:), 'r-');
+title('with white boot term ')
+
+subplot(2,2,2)
+plot(coef_L_boot(2,:), '-');
+ylim([-5 5])
+hold on
+plot(coef_R_boot(2,:), 'r-');
+
+
+subplot(2,2,3)
+plot(coef_L_boot(3,:),'-');
+ylim([-5 5])
+hold on 
+plot(coef_R_boot(3,:), 'r-');
+%}
