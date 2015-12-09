@@ -2,7 +2,7 @@
 
 run('../always.m');
 init_hotelcalifornia();
-
+%{
 %align
 chunk = chunk_class(3.214-0.1, 6.513, ts, 1);
 win = chunk.get_win_ind();
@@ -60,3 +60,4 @@ plot(A4(2,:),'k-');
 hold on 
 plot(A5(2,:),'b-');
 legend('no noise','constant', 'white', 'boot','boot_sub', 'Location','northwest');
+%}
