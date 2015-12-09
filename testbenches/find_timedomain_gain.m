@@ -218,7 +218,9 @@ figure(3);
 plot(t2); hold all;
 plot(y2); hold off;
 legend('actual','mixed');
-title('Results of algorithm, Time (R ch. only)')
+title('Time Domain of Prediction vs. Master (R ch. only)');
+xlabel('time (samples)');
+ylabel('Amplitude');
 
 
 
@@ -227,12 +229,15 @@ figure(4);
 subplot(211);
 plot(alpha2(:,1));
 ylim([-0 3]);
-title('gain of x1 over time');
+title('gain of x1');
+% xlabel('time (samples)');
+ylabel('gain');
 subplot(212);
 plot(alpha2(:,2));
 ylim([-0 3]);
-title('gain of x3 over time');
-
+title('gain of x3');
+xlabel('time (samples)');
+ylabel('gain');
 
 % figure(5);
 % plot(t1_rms); hold all;
