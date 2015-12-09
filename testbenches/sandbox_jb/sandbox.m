@@ -21,7 +21,7 @@ chunk2 = chunk_class(6.515-0.1, 9.715, ts, 1);
 chunk3 = chunk_class(9.718-0.1, 12.979, ts, 1);
 
 %%% all 3
-chunkall = chunk_class(3.214-0.1, 12.979, ts, 1);
+chunkall = chunk_class(3.214+0.1, 12.979, ts, 1);
 
 
 % chunk = chunk1;
