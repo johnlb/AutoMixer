@@ -1,4 +1,4 @@
-function [coef_L, coef_R] = cal_plot( x_rms, t_rms, M, p, word)
+function [coef_L, coef_R, reduced_coef_L, reduced_coef_R] = cal_plot( x_rms, t_rms, M, p, word)
     M = 3000;
     L = length(x_rms);
     row_n = floor(L/M);
