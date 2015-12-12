@@ -2,7 +2,7 @@
 clear run_find_coeffs
 
 
-run('../../always.m');
+run('../always.m');
 init_hotelcalifornia();
 
 
