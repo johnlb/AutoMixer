@@ -76,17 +76,19 @@ fprintf('Caluclating Coefficients...\n');
 	
 
 	% for each window
-	for ii = 0:nwins-1
+	for ii = 1:nwins
 		% calc gain
-		aL(wins(:,ii),goodtracksL(:,ii)) = xL(wins(:,ii),goodtracksL(:,ii))\yL(wins(:,ii));
-		aR(wins(:,ii),goodtracksR(:,ii)) = xR(wins(:,ii),goodtracksR(:,ii))\yR(wins(:,ii));
+		aL(wins(:,ii),goodtracksL(:,ii)) = repmat( xL(wins(:,ii),goodtracksL(:,ii))\yL(wins(:,ii)), 1,winSize )';
+		aR(wins(:,ii),goodtracksR(:,ii)) = repmat( xR(wins(:,ii),goodtracksR(:,ii))\yR(wins(:,ii)), 1,winSize )';
 
 		if (mod(ii,nwins/10) < 1)
-			fprintf('%i%%...',round(nwins/ii));
+			fprintf('%i%%...',round(100*ii/nwins));
 		end
 	end
-fprintf('done.\n');
 
+
+
+fprintf('done.\n');
 
 end
 

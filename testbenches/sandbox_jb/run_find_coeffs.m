@@ -14,10 +14,17 @@ yL = sum(aL.*xL, 2);
 yR = sum(aR.*xR, 2);
 
 
-time = (0:length(x))*ts/length(x);
 
-figure(1);
-plot(time,tL, time,yL);
 
-figure(2);
-plot(time,tR, time,yR);
+% plot stuff
+time = (0:length(x)-1)*ts;
+
+plot_gains(time,aL,1);
+plot_gains(time,aL,2);
+
+
+% figure(3);
+% plot(time,tL, time,yL);
+
+% figure(4);
+% plot(time,tR, time,yR);
