@@ -1,5 +1,5 @@
 %% plot_gains: plots all the gains
-function [] = plot_gains(a,time,fig)
+function [] = plot_gains(time,a,fig)
 
 	K = size(a,2);
 

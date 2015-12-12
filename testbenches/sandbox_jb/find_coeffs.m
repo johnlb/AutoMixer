@@ -8,7 +8,7 @@ function [aL aR] = find_coeffs(xL,xR, yL,yR, ts, winSize)
 	aL 		= zeros(N,K);
 	aR 		= zeros(N,K);
 
-%{
+% {
 	% Time alignment window should at least as big as the minimum possible timing offset,
 	% 	so we catch at least one big feature in both x and y.
 	% It should also be an integer multiple of the coeff window so that any seams in the data
@@ -62,10 +62,10 @@ fprintf('Caluclating RMS...\n');
 	yL = ampl2rms(yL,rmswin);
 	yR = ampl2rms(yR,rmswin);
 
-save('./state/find_coeffs-rms.mat');
+% save('./state/find_coeffs-rms.mat');
 %}
 
-load('./state/find_coeffs-rms.mat');
+% load('./state/find_coeffs-rms.mat');
 
 
 fprintf('Caluclating Coefficients...\n');

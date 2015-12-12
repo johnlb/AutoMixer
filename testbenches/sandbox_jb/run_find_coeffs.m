@@ -20,11 +20,11 @@ yR = sum(aR.*xR, 2);
 time = (0:length(x)-1)*ts;
 
 plot_gains(time,aL,1);
-plot_gains(time,aL,2);
+plot_gains(time,aR,2);
 
 
-% figure(3);
-% plot(time,tL, time,yL);
+figure(3);
+plot(time,tL, time,yL);
 
-% figure(4);
-% plot(time,tR, time,yR);
+figure(4);
+plot(time,tR, time,yR);
