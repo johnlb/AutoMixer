@@ -32,6 +32,13 @@ x1_rms = pk_det(x1_rms',ts,1e-3)';
 
 
 
+
+
+
+
+
+
+
 %% Try finding Sys
 win1 = chunk1.get_win_ind()-win(1)+1;
 win2 = chunk2.get_win_ind()-win(1)+1;

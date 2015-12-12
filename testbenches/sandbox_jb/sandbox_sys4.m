@@ -12,6 +12,32 @@ chunk3 = chunk_class(9.718-0.1, 12.979, ts, 1);
 
 
 
+
+
+
+
+
+% Fill in bad Data
+
+tau = 0.25/ts;
+rep = {109811+(0:38673)',	253532+(0:38983)', 	409514+(0:16485)'};
+for ii = 1:length(rep)
+	thisL = length(rep{ii});
+	a0 = alpha2(rep{ii}(1));
+
+	alpha2(rep{ii},1) = (a0 - amax(1))*exp(-(0:thisL-1)/tau) + amax(1);
+end
+
+
+
+
+
+
+
+
+
+
+
 %%%%%%%%%
 % Generate source signals
 
@@ -82,7 +108,7 @@ x3_rms(find(x3_rms<0)) = 0;
 x3_rms = -x3_rms;
 
 
-a = [ log(alpha2(piece_win,1)./amax(1)) 	log(alpha2(piece_win,2)./amax(2)) ];
+a = [ log(alpha2(:,1)./amax(1)) 	log(alpha2(:,2)./amax(2)) ];
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,7 +129,7 @@ a = [ log(alpha2(piece_win,1)./amax(1)) 	log(alpha2(piece_win,2)./amax(2)) ];
 % Do stuff
 
 % create all window indexes
-fft_size = 2^12;
+fft_size = 2^15;
 winstep = round(fft_size*(1/4));
 nwins = floor( (L-fft_size)/winstep );
 win_sweep = 1 + bsxfun(@plus, (0:fft_size-1)',winstep*(0:nwins-1));
@@ -114,13 +140,14 @@ w = ones(fft_size,1);
 A = zeros(fft_size,2,nwins);
 X = zeros(fft_size,2,nwins);
 TF = zeros(fft_size,2,nwins);
-epsilon1 = 1e1;
-epsilon2 = 1e1;
+epsilon1 = 8e1;
+epsilon2 = 8e1;
 for ii = 1:nwins
 	thiswin = win_sweep(:,ii);
 
 	thisX = [fft(w.*x1_rms(thiswin)) fft(w.*x3_rms(thiswin))];
-	thisA = [fft(w.*alpha2(thiswin,1)) fft(w.*alpha2(thiswin,2))];
+	thisA = [fft(w.*a(thiswin,1)) fft(w.*a(thiswin,2))];
+	% thisA = [fft(w.*alpha2(thiswin,1)) fft(w.*alpha2(thiswin,2))];
 
 	% take ffts for all windows
 	X(:,:,ii) = thisX;
@@ -131,7 +158,6 @@ for ii = 1:nwins
 					find_tf(thisX(:,2), thisA(:,2),epsilon2)	];
 
 
-	
 end
 
 % average all TFs
@@ -146,7 +172,7 @@ for ii = 1:ntracks
 	ir_avg(:,ii) = ifft(TF_avg(:,ii));
 end
 
-a = zeros(fft_size,ntracks,nwins);
+a_sect = zeros(fft_size,ntracks,nwins);
 for ii = 1:nwins
 	thiswin = win_sweep(:,ii);
 
@@ -155,7 +181,7 @@ for ii = 1:nwins
 
 	thisa(fft_size+1:end,:) = [];
 
-	a(:,:,ii) = thisa;
+	a_sect(:,:,ii) = thisa;
 end
 
 
@@ -183,32 +209,38 @@ time = (0:fft_size-1)*ts;
 ssect = 8;
 
 figure(1);
-subplot(311);
-plot(time,alpha2(win_sweep(:,ssect+1),1), time,a(:,1,ssect+1));
-subplot(312);
-plot(time,alpha2(win_sweep(:,ssect+2),1), time,a(:,1,ssect+2));
-subplot(313);
-plot(time,alpha2(win_sweep(:,ssect+3),1), time,a(:,1,ssect+3));
+subplot(211);
+plot(time2,x1_rms);
+subplot(212);
+plot(time2,x3_rms);
 
 
 
 figure(2);
-subplot(311);
-plot(time,alpha2(win_sweep(:,ssect+1),2), time,a(:,2,ssect+1));
-subplot(312);
-plot(time,alpha2(win_sweep(:,ssect+2),2), time,a(:,2,ssect+2));
-subplot(313);
-plot(time,alpha2(win_sweep(:,ssect+3),2), time,a(:,2,ssect+3));
+subplot(211);
+plot(time2,a(:,1));
+subplot(212);
+plot(time2,a(:,2));
+
+
 
 
 time2 = (0:L-1)*ts;
 
 figure(3);
 subplot(211);
-plot(time2,alpha2(:,1), time2,(a_all(:,1)));
+plot(time2,a(:,1), time2,(a_all(:,1)));
 
 subplot(212);
-plot(time2,alpha2(:,2), time2,a_all(:,2));
+plot(time2,a(:,2), time2,a_all(:,2));
+
+
+% figure(3);
+% subplot(211);
+% plot(time2,alpha2(:,1), time2,(a_all(:,1)));
+
+% subplot(212);
+% plot(time2,alpha2(:,2), time2,a_all(:,2));
 
 
 
@@ -229,3 +261,9 @@ plot(time2,alpha2(:,2));
 figure(6);
 subplot(211);
 plot(t1_rms);
+
+
+
+
+figure(10);
+plot(time,a_sect(:,1,1))

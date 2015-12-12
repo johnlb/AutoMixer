@@ -1,5 +1,5 @@
 %% readin_hotelcalifornia: reads all data for hotel california and preps it.
-function [x, y, x_names, fs] = readin_hotelcalifornia(DATA_PATH)
+function [x, y, pan, x_names, fs] = readin_hotelcalifornia(DATA_PATH)
 
 
 % if (~exist('LOADED_DATA'))
@@ -17,6 +17,7 @@ fileext 	= '.mp3';
 % filenames 	= {'MASTER', 'Bass', 'Guitar', 'Hat', 'Kick', 'Snare', 'Vox_Guitar'};
 filenames 	= {'MASTER', 'Kick', 'Snare', 'Hat', 'Bass', 'Guitar', 'Vox_Guitar'};
 jj			= 1;
+x 			= {};
 for ii = 1:length(filenames)
 
 	[x{jj} fs] = audioread([DATA_PATH '/hotel_california/' filenames{ii} fileext]);
@@ -29,9 +30,13 @@ for ii = 1:length(filenames)
 		x_names{jj} 	= [filenames{ii} '-L'];
 		x_names{jj+1}	= [filenames{ii} '-R'];
 
-		jj 			= jj + 1;
+		pan{jj}			= [1 0];
+		pan{jj+1}		= [0 1];
+
+		jj = jj + 1;
 	else
 		x_names{jj} = filenames{ii};
+		pan{jj}		= [1 1];
 	end
 
 	jj = jj + 1;
@@ -64,6 +69,9 @@ y = [x{1:2}];
 x = [x{3:end}];
 
 x_names = {x_names{3:end}};
+
+pan 	= cell2mat(pan(3:end)');
+pan 	= pan > 0;
 
 
 
