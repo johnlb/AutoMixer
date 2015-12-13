@@ -25,7 +25,7 @@ fullnames = {rec_files(master==1).name, rec_files(master==0).name};
 jj			= 1;
 for ii = 1:length(filenames)
 
-	[x{jj} fs] = audioread([DATA_PATH '/' rec_name '/' filenames{ii} fileext],[1,44100*10]);
+	[x{jj} fs] = audioread([DATA_PATH '/' rec_name '/' filenames{ii} fileext]);
 
 	% Split up stereo tracks
 	if (size(x{jj},2)==2)
@@ -47,7 +47,7 @@ ts = 1/fs;
 
 
 % Time align master track to other tracks.
-%x = time_align_hc(x,ts, [51.609 52.510], [54.178 55.230], 4);
+x = time_align_hc(x,ts, [51.609 52.510], [54.178 55.230], 4);
 
 
 % Zero pad end of master track s.t. all lengths line up.
