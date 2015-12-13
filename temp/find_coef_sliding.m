@@ -8,8 +8,12 @@ function [ coef_L, coef_R ] = find_coef_sliding(x, t, window_length, step )
         if(rank(temp) >= size(x,2))
             y_L = t(i * step + 1: i * step + window_length,1);
             y_R = t(i * step + 1: i * step + window_length,2);
-            coef_L(:,i) = LSS.CFS(temp, y_L);
-            coef_R(:,i) = LSS.CFS(temp, y_R);
+            temp_L = LSS.CFS(temp, y_L);
+            temp_R = LSS.CFS(temp, y_R);
+            for k = 1:step
+                coef_L(:,i*step + k) = temp_L;
+                coef_R(:,i*step + k) = temp_R;
+            end
         end
     end
 

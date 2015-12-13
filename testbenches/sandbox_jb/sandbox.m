@@ -12,13 +12,21 @@ init_hotelcalifornia();
 
 
 %%% 1st bass note
-chunk = chunk_class(3.214-0.1, 6.513, ts, 1);
+chunk1 = chunk_class(3.214-0.1, 6.513, ts, 1);
 
 %%% 2nd bass note
-% chunk = chunk_class(6.515-0.1, 9.715, ts, 1);
+chunk2 = chunk_class(6.515-0.1, 9.715, ts, 1);
 
 %%% 3nd bass note
-% chunk = chunk_class(9.718-0.1, 12.979, ts, 1);
+chunk3 = chunk_class(9.718-0.1, 12.979, ts, 1);
+
+%%% all 3
+chunkall = chunk_class(3.214+0.1, 12.979, ts, 1);
+
+
+% chunk = chunk1;
+chunk = chunkall;
+
 
 
 win = chunk.get_win_ind();
@@ -118,7 +126,7 @@ end
 
 
 % Smooth the gains we find.
-alpha2(find(abs(alpha2)>10)) = 1;
+alpha2(find(abs(alpha2)>3)) = 1;
 alpha2(:,1) = smooth(alpha2(:,1),5*M);
 alpha2(:,2) = smooth(alpha2(:,2),5*M);
 % alpha2(:,3) = smooth(alpha2(:,3),5*M);
@@ -255,45 +263,40 @@ title('gain of x3 over time');
 
 
 
-
-
-
-
-
 % %% Look at freq domain
-FFT_LEN = 1024;
-OVERLAP = FFT_LEN/4;
-df 		= fs/2/FFT_LEN;
-dt 		= (FFT_LEN-OVERLAP)*ts;
-t_stft 	= 0:dt:(L-FFT_LEN);
+% FFT_LEN = 1024;
+% OVERLAP = FFT_LEN/4;
+% df 		= fs/2/FFT_LEN;
+% dt 		= (FFT_LEN-OVERLAP)*ts;
+% t_stft 	= 0:dt:(L-FFT_LEN);
 
-X1 = STFT(x1,FFT_LEN,OVERLAP);
-X2 = STFT(x2,FFT_LEN,OVERLAP);
-X3 = STFT(x3,FFT_LEN,OVERLAP);
+% X1 = STFT(x1,FFT_LEN,OVERLAP);
+% X2 = STFT(x2,FFT_LEN,OVERLAP);
+% X3 = STFT(x3,FFT_LEN,OVERLAP);
 
-T1 = STFT(t1,FFT_LEN,OVERLAP);
-T2 = STFT(t2,FFT_LEN,OVERLAP);
+% T1 = STFT(t1,FFT_LEN,OVERLAP);
+% T2 = STFT(t2,FFT_LEN,OVERLAP);
 
-X1_ = (abs(X1));
-X2_ = (abs(X2));
-X3_ = (abs(X3));
+% X1_ = (abs(X1));
+% X2_ = (abs(X2));
+% X3_ = (abs(X3));
 
-T1_ = (abs(T1));
-T2_ = (abs(T2));
+% T1_ = (abs(T1));
+% T2_ = (abs(T2));
 
-FWIN = 1:45;
+% FWIN = 1:45;
 
-figure(5);
-subplot(511);
-imagesc(X1_(FWIN,:));
-subplot(512);
-imagesc(X2_(FWIN,:));
-subplot(513);
-imagesc(X3_(FWIN,:));
-subplot(514);
-imagesc(T1_(FWIN,:));
-subplot(515);
-imagesc(T2_(FWIN,:));
+% figure(5);
+% subplot(511);
+% imagesc(X1_(FWIN,:));
+% subplot(512);
+% imagesc(X2_(FWIN,:));
+% subplot(513);
+% imagesc(X3_(FWIN,:));
+% subplot(514);
+% imagesc(T1_(FWIN,:));
+% subplot(515);
+% imagesc(T2_(FWIN,:));
 
 
 

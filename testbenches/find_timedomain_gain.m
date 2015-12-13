@@ -30,6 +30,7 @@ L = length(win);
 
 
 
+
 %%%%%%%%%%%%%
 % Time alignment
 %
@@ -115,12 +116,12 @@ for ii = 1:NUM_WINS
 
 	alpha2 	= [alpha2; repmat(alpha',M,1)];
 end
-
+%{
 
 % Smooth the gains we find.
-alpha2(find(abs(alpha2)>10)) = 1;
-alpha2(:,1) = smooth(alpha2(:,1),5*M);
-alpha2(:,2) = smooth(alpha2(:,2),5*M);
+%alpha2(find(abs(alpha2)>10)) = 1;
+%alpha2(:,1) = smooth(alpha2(:,1),5*M);
+%alpha2(:,2) = smooth(alpha2(:,2),5*M);
 % alpha2(:,3) = smooth(alpha2(:,3),5*M);
 
 
@@ -218,7 +219,9 @@ figure(3);
 plot(t2); hold all;
 plot(y2); hold off;
 legend('actual','mixed');
-title('Results of algorithm, Time (R ch. only)')
+title('Time Domain of Prediction vs. Master (R ch. only)');
+xlabel('time (samples)');
+ylabel('Amplitude');
 
 
 
@@ -227,16 +230,19 @@ figure(4);
 subplot(211);
 plot(alpha2(:,1));
 ylim([-0 3]);
-title('gain of x1 over time');
+title('gain of x1');
+% xlabel('time (samples)');
+ylabel('gain');
 subplot(212);
 plot(alpha2(:,2));
 ylim([-0 3]);
-title('gain of x3 over time');
-
+title('gain of x3');
+xlabel('time (samples)');
+ylabel('gain');
 
 % figure(5);
 % plot(t1_rms); hold all;
 % plot(x1_rms); hold all;
 % plot(x2_rms); hold all;
 % plot(x1_rms*.65*2.6 + x2_rms*0.3*2.6); hold off;
-
+%}
