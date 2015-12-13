@@ -3,7 +3,7 @@ function [aL aR] = find_coeffs(xL,xR, yL,yR, ts, winSize, nwins_ta, interp_metho
 
 
 	if (nargin<8)
-		interp_method = 'linear';
+		interp_method = 'pchip';
 	end
 
 
