@@ -13,6 +13,8 @@ gainL = vertcat(abs(1.25 * cos(time * 0.9) - sin(time * 2.5).^3) + (cos(time * 2
 gainR = vertcat(abs(log(sin(time * 0.8)).^ cos(time * 2) + cos(time * 1.5) + cos(time + 1.12) .^(0.5)),abs(sin(time * 1.75).^0.5 + log(cos(time * 0.8).^1.5)))';
 tL_p = sum(gainL.*xL_p, 2);
 tR_p = sum(gainR.*xR_p, 2);
+yL_p = tL(piece);
+yR_p = tR(piece);
 thre = 10;
 win_len = 100:500:5000;
 rms_win = 1: 5: 100;
@@ -58,12 +60,23 @@ mse = zeros(length(win_len), length(rms_win));
 % end  
 %     
 % thre = a(find(rms == min(rms))) * rms_win
-rms_win = 60;
-thre = rms_win * 0.4;
+rms_win = 40;
+thre = rms_win * 0.25;
 
-[aL aR winSize] = find_coeffs(xL_p,xR_p, tL_p,tR_p, ts, 3000 ,2,  rms_win, 'pchip',thre);
-plot_comp(time,xL_p, aL,gainL,1, rms_win, winSize, thre,1);
-plot_comp(time,xR_p, aR,gainR,2, rms_win, winSize, thre,1);
+%[aL aR winSize] = find_coeffs(xL_p,xR_p, tL_p,tR_p, ts, 3000 ,2,  rms_win, 'pchip',thre);
+[aL aR winSize] = find_coeffs(xL_p,xR_p, yL_p,yR_p, ts, 3000 ,2,  rms_win, 'pchip',thre);
+figure(1)
+%subplot(1,2,1)
+plot(time, yL_p)
+hold on
+plot(time, sum(aL .* xL_p,2))
+ylim([-1,1])
+legend('estimated output', 'real output')
+%title('estimated')
+%subplot(1,2,2)
+
+%ylim([-1,1])
+
 
 %plot_comp(time,xL_p, aL, gainL,3, rms_win, winSize, thre,0);
 %plot_comp(time,xR_p, aR, gainR,4, rms_win, winSize, thre,0);
