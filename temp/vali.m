@@ -3,7 +3,7 @@
 run('../always.m');
 init_hotelcalifornia();
 %}
-
+%{
 piece = 170000 : 220000;
 xL_p = xL(piece,4:5);
 xR_p = xR(piece,4:5);
@@ -21,8 +21,9 @@ for i = 1:length(win_len)
         mse(i,j) = mean(sum((aL - gainL).^2)) + mean(sum((aR - gainR).^2));
     end
 end
+%}
 [i,j] = find(mse==min(mse(:)))
-[aL aR] = find_coeffs(xL_p,xR_p, tL_p,tR_p, ts, win_len(i(1)) ,2,  rms_win(j(1)));
+[aL aR] = find_coeffs(xL_p,xR_p, tL_p,tR_p, ts, win_len(i(1)) ,2,  rms_win(j(1)), 'pchip');
 plot_comp(time,aL,gainL,1);
 plot_comp(time,aR,gainR,2);
 figure(3)

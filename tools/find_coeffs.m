@@ -1,5 +1,5 @@
 %% find_coeffs: finds time-varying coefficients s.t. y = sum(x.*a)
-function [aL aR] = find_coeffs(xL,xR, yL,yR, ts, winSize, nwins_ta, interp_method)
+function [aL aR] = find_coeffs(xL,xR, yL,yR, ts, winSize, nwins_ta,rmswin, interp_method)
 
 
 	if (nargin<8)
@@ -60,7 +60,7 @@ fprintf('Running time alignment...\n');
 
 fprintf('Caluclating RMS...\n');
 	% Calc RMS
-	rmswin = round(0.2e-3/ts);
+	
 
 	xL = ampl2rms(xL,rmswin);
 	xR = ampl2rms(xR,rmswin);
