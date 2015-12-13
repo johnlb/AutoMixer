@@ -1,5 +1,11 @@
 %% find_coeffs: finds time-varying coefficients s.t. y = sum(x.*a)
-function [aL aR] = find_coeffs(xL,xR, yL,yR, ts, winSize)
+function [aL aR] = find_coeffs(xL,xR, yL,yR, ts, winSize, nwins_ta,rmswin, interp_method)
+
+
+	if (nargin<8)
+		interp_method = 'pchip';
+	end
+
 
 	N 		= size(xL,1);
 	K 		= size(xL,2);
@@ -7,6 +13,7 @@ function [aL aR] = find_coeffs(xL,xR, yL,yR, ts, winSize)
 
 	aL 		= zeros(N,K);
 	aR 		= zeros(N,K);
+	n 		= (1:N)';
 
 % {
 	% Time alignment window should at least as big as the minimum possible timing offset,
@@ -19,8 +26,7 @@ function [aL aR] = find_coeffs(xL,xR, yL,yR, ts, winSize)
 	% winSize_ta  = find_next_divisor(nwins, 1e7/winSize);
 	% nwins_ta 	= L/winSize_ta;
 
-	nwins_ta 	= 101;
-	[nwins_ta winSize_ta nwins winSize] = find_window_sizes(101, winSize, N);
+	[nwins_ta winSize_ta nwins winSize] = find_window_sizes(nwins_ta, winSize, N);
 	
 	L = nwins_ta*winSize_ta;
 
@@ -47,14 +53,14 @@ function [aL aR] = find_coeffs(xL,xR, yL,yR, ts, winSize)
 
 fprintf('Running time alignment...\n');
 	% Find time alignment for whole track
-	xL = time_align(xL,yL, wins_timealign);
-	xR = time_align(xR,yR, wins_timealign);
+	[xL nL] = time_align(xL,yL, wins_timealign);
+	[xR nR] = time_align(xR,yR, wins_timealign);
 
 
 
 fprintf('Caluclating RMS...\n');
 	% Calc RMS
-	rmswin = round(0.2e-3/ts);
+	
 
 	xL = ampl2rms(xL,rmswin);
 	xR = ampl2rms(xR,rmswin);
@@ -76,19 +82,51 @@ fprintf('Caluclating Coefficients...\n');
 	
 
 	% for each window
+	aL_win = zeros(K,nwins);
+	aR_win = zeros(K,nwins);
+	nL_win = zeros(K,nwins);
+	nR_win = zeros(K,nwins);
+	wins_mid = wins(round(winSize/2),:);
 	for ii = 1:nwins
 		% calc gain
-		aL(wins(:,ii),goodtracksL(:,ii)) = repmat( xL(wins(:,ii),goodtracksL(:,ii))\yL(wins(:,ii)), 1,winSize )';
-		aR(wins(:,ii),goodtracksR(:,ii)) = repmat( xR(wins(:,ii),goodtracksR(:,ii))\yR(wins(:,ii)), 1,winSize )';
+		aL_win(goodtracksL(:,ii),ii) = xL(wins(:,ii),goodtracksL(:,ii))\yL(wins(:,ii));
+		aR_win(goodtracksR(:,ii),ii) = xR(wins(:,ii),goodtracksR(:,ii))\yR(wins(:,ii));
+		% aL(wins(:,ii),goodtracksL(:,ii)) = repmat( xL(wins(:,ii),goodtracksL(:,ii))\yL(wins(:,ii)), 1,winSize )';
+		% aR(wins(:,ii),goodtracksR(:,ii)) = repmat( xR(wins(:,ii),goodtracksR(:,ii))\yR(wins(:,ii)), 1,winSize )';
+
+		% calc time points for each window
+		nL_win(goodtracksL(:,ii),ii) = nL(wins_mid(ii),goodtracksL(:,ii));
+		nR_win(goodtracksR(:,ii),ii) = nR(wins_mid(ii),goodtracksR(:,ii));
 
 		if (mod(ii,nwins/10) < 1)
 			fprintf('%i%%...',round(100*ii/nwins));
 		end
 	end
+	aL_win = abs(aL_win');
+	aR_win = abs(aR_win');
+	nL_win = 	 nL_win';
+	nR_win = 	 nR_win';
 
 
 
 fprintf('done.\n');
+
+
+fprintf('Interpolating data...\n');
+
+	for ii = 1:K
+		fprintf('Track %i\n',ii);
+
+		% only include valid data
+		ptrsL = find(nL_win(:,ii)>0);
+		ptrsR = find(nR_win(:,ii)>0);
+
+		% figure(10); plot(nL_win(ptrsL));
+		aL(:,ii) = interp1([1; nL_win(ptrsL,ii); n(end)],[0; aL_win(ptrsL,ii); 0], ...
+							n, interp_method);
+		aR(:,ii) = interp1([1; nR_win(ptrsR,ii); n(end)],[0; aR_win(ptrsR,ii); 0], ...
+							n, interp_method);
+	end
 
 end
 
@@ -141,7 +179,7 @@ function [nwins_ta winSize_ta nwins winSize] = find_window_sizes(nwins_ta, winSi
 			direction = +1;
 		end
 
-		if (nwins_ta == 1000)
+		if (nwins_ta > 1000)
 			error('Solution to window size not found');
 		end
 	end

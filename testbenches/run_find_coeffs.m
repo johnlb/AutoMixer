@@ -2,12 +2,12 @@
 clear run_find_coeffs
 
 
-run('../../always.m');
+run('../always.m');
 init_hotelcalifornia();
 
 
 
-[aL aR] = find_coeffs(xL,xR, tL,tR, ts, 3000);
+[aL aR] = find_coeffs(xL,xR, tL,tR, ts, 2000,99, 'pchip');
 
 
 yL = sum(aL.*xL, 2);
