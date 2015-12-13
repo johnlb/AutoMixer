@@ -25,7 +25,7 @@ function [] = plot_gains(time,x, a, a_o,fig, rms_win, winSize,thre, clean)
         
         legend('input', 'real','estimated')
 		title(sprintf('Track %i',ii));
-        ylim([-2 5]);
+        ylim([-1 2]);
         xlim([min(time) + 0.5, max(time) - 0.5])
 	end
 
