@@ -1,5 +1,5 @@
 %plot & compare
-function [] = plot_gains(time,x, a, a_o,fig, rms_win, winSize,thre, clean, t_id)
+function [] = plot_gains(time,x, a, a_o,fig, rms_win, winSize,thre, clean)
 
 	K = size(a,2);
     x_rms = ampl2rms(x,rms_win);
@@ -9,11 +9,10 @@ function [] = plot_gains(time,x, a, a_o,fig, rms_win, winSize,thre, clean, t_id)
         I = cell2mat(I');
     end
 	figure(fig);
-    K = length(t_id);
-	for i = 1:K
-        ii = t_id(i);
-		subplot(ceil(K/2),2,i);
-        plot(time, x(:,ii)/max(max(x)),'y');
+
+	for ii = 1:K
+		subplot(ceil(K/2),2,ii);
+        plot(time, x(:,ii)/max(max(x))/2,'y');
         hold on
         if clean == 1
             plot(time(I(:,ii)), a(I(:,ii),ii),'.','MarkerFaceColor',[0.87451,0.93725,0.96078]);
