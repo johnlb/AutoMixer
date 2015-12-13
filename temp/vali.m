@@ -1,34 +1,50 @@
 
-%{
+
 run('../always.m');
 init_hotelcalifornia();
-%}
 
-piece = 100000 : 4000000;
+
+piece = 300000 : 1000000;
 xL_p = xL(piece,:);
 xR_p = xR(piece,:);
-time = (100000 : 4000000)*ts;
-gainL = repmat(abs(sin(time / 5)),6,1)';
-gainR = repmat(abs(cos(time / 8)),6,1)';
+time = (300000 : 1000000)*ts;
+gainL = repmat(abs(sin(time * 1.5)),size(xL_p,2),1)';
+gainR = repmat(abs(cos(time * 2)),size(xL_p,2),1)';
 tL_p = sum(gainL.*xL_p, 2);
 tR_p = sum(gainR.*xR_p, 2);
-%{
+thre = 10;
 win_len = 100:100:3000;
 rms_win = 1: 5: 100;
 mse = zeros(length(win_len), length(rms_win));
-for i = 1:length(win_len)
-    for j = 1:length(rms_win)
-        [aL aR] = find_coeffs(xL_p,xR_p, tL_p,tR_p, ts, win_len(i) ,2, rms_win(j),'pchip');
-        mse(i,j) = mean(sum((xL_p > 0) .* ((aL - gainL).^2))) + mean(sum((xR_p > 0) .* ((aR - gainR).^2)));
+%{
+for j = 1:length(rms_win)
+    xL_rms = ampl2rms(xL_p,rms_win(j));
+    xR_rms = ampl2rms(xR_p,rms_win(j));
+    for i = 1:length(win_len)
+        [aL aR winSize] = find_coeffs(xL_p,xR_p, tL_p,tR_p, ts, win_len(i) ,1, rms_win(j),'pchip',thre);
+        
+        win_n = ceil(length(xL_p)/winSize);
+        I_L = arrayfun(@(z) repmat(sum(xL_rms((z - 1) * winSize + 1: z * winSize,:),1) > thre, winSize, 1), ...
+            1: length(xL_p)/winSize,'UniformOutput', false);
+        I_L = cell2mat(I_L');
+        I_R = arrayfun(@(z) repmat(sum(xR_rms((z - 1) * winSize + 1: z * winSize,:),1) > thre, winSize, 1), ...
+            1: length(xL_p)/winSize,'UniformOutput', false);
+        I_R = cell2mat(I_R');
+        mse(i,j) = mean(sum(I_L .* ((aL - gainL).^2))) + mean(sum((I_R) .* ((aR - gainR).^2)));
     end
 end
-[i,j] = find(mse==min(mse(:)))
-
-[aL aR] = find_coeffs(xL_p,xR_p, tL_p,tR_p, ts, win_len(i(1)) ,2,  rms_win(j(1)), 'pchip');
+[i,j] = find(mse==min(mse(:)));
 %}
-[aL aR] = find_coeffs(xL_p,xR_p, tL_p,tR_p, ts, 3000 ,2,  96, 'pchip');
-plot_comp(time,xL_p, aL,gainL,1);
-plot_comp(time,xR_p, aR,gainR,2);
+
+%[aL aR] = find_coeffs(xL_p,xR_p, tL_p,tR_p, ts, win_len(i(1)) ,1,  rms_win(j(1)), 'pchip', thre);
+thre = 10;
+rms_win = 96;
+[aL aR winSize] = find_coeffs(xL_p,xR_p, tL_p,tR_p, ts, 3000 ,2,  rms_win, 'pchip',thre);
+plot_comp(time,xL_p, aL,gainL,1, rms_win, winSize, thre,1, 4:5);
+plot_comp(time,xR_p, aR,gainR,2, rms_win, winSize, thre,1, 4:5);
+%plot_comp(time,xL_p, aL, gainL,3, rms_win, winSize, thre,0);
+%plot_comp(time,xR_p, aR, gainR,4, rms_win, winSize, thre,0);
+
 %{
 figure(3)
 surf(rms_win(10:end), win_len, mse(:,10:end));
