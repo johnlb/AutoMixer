@@ -1,24 +1,4 @@
-%%% hello.
-clear run_find_coeffs
-
-
-run('../always.m');
-init_hotelcalifornia();
-
-
-
-winsize = 3000;
-
-
-[aL aR nL nR] = find_coeffs(xL,xR, tL,tR, ts, winsize,99);
-
-
-% % Smooth the gains we find.
-% for ii = 1:size(aL,2)
-% 	fprintf('Smoothing track %i\n',ii);
-% 	aL(:,ii) = smooth(aL(:,ii),5*winsize);
-% 	aR(:,ii) = smooth(aR(:,ii),5*winsize);
-% end
+clear test
 
 
 % Do timealigned mixing
@@ -71,7 +51,3 @@ plot(time,tL, time,yL);
 
 figure(4);
 plot(time,tR, time,yR);
-
-
-
-audiowrite([DATA_PATH '/hotel_california/output/prediction.mp3'],[yL yR],fs);
