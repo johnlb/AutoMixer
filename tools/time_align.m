@@ -25,12 +25,14 @@ function [x_aligned, n_aligned] = time_align(x,y,wins)
 	x_aligned = zeros(size(x));
 	n_aligned = zeros(size(x));
 	lag 	  = zeros(1,K);
+	pol 	  = zeros(1,K);
 	for ii = 2:nwins-1
 		thiswin = (ii-1)*winSize + (0:winSize-1);
 		for jj = 1:K
 			[acor,corrx] = xcorr(x(thiswin,jj), y(thiswin));
 			[~,ptr] = max(abs(acor));
 			lag(jj) = corrx(ptr);
+			pol(jj) = corrx(ptr)/abs(corrx(ptr));
 		end
 
 		minind = xptrs(thiswin(1),:)   + lag;
@@ -39,6 +41,7 @@ function [x_aligned, n_aligned] = time_align(x,y,wins)
 
 		% constuct output matricies
 		x_aligned(wins(:,ii),:) = reshape(x(xwin), winSize,K);
+		x_aligned(wins(:,ii),:) = bsxfun(@times, x_aligned(wins(:,ii),:), pol);
 		n_aligned(wins(:,ii),:) = reshape(n(xwin), winSize,K);
 
 		fprintf('%i/%i\n', ii-1, nwins-2);

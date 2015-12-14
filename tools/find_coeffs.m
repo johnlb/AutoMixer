@@ -1,15 +1,18 @@
 %% find_coeffs: finds time-varying coefficients s.t. y = sum(x.*a)
-function [aL aR] = find_coeffs(xL,xR, yL,yR, ts, winSize, nwins_ta,rmswin, interp_method)
+function [aL aR nL nR] = find_coeffs(xL,xR, yL,yR, ts, winSize, nwins_ta,rmswin, interp_method)
 
 
-	if (nargin<8)
+	if (nargin<9)
 		interp_method = 'pchip';
 	end
 
+	if (nargin<8)
+		rmswin = 19;
+	end
 
 	N 		= size(xL,1);
-	K 		= size(xL,2);
-	Ethresh = 10;
+	K 		= size(xL,2);	% assumes equal number channels panned L & R
+	Ethresh = 40;
 
 	aL 		= zeros(N,K);
 	aR 		= zeros(N,K);
@@ -60,13 +63,12 @@ fprintf('Running time alignment...\n');
 
 fprintf('Caluclating RMS...\n');
 	% Calc RMS
-	
-
 	xL = ampl2rms(xL,rmswin);
 	xR = ampl2rms(xR,rmswin);
 
 	yL = ampl2rms(yL,rmswin);
 	yR = ampl2rms(yR,rmswin);
+
 
 % save('./state/find_coeffs-rms.mat');
 %}
