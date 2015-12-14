@@ -13,48 +13,48 @@ winsize = 3000;
 [aL aR nL nR] = find_coeffs(xL,xR, tL,tR, ts, winsize,99);
 
 
-% % Smooth the gains we find.
-% for ii = 1:size(aL,2)
-% 	fprintf('Smoothing track %i\n',ii);
-% 	aL(:,ii) = smooth(aL(:,ii),5*winsize);
-% 	aR(:,ii) = smooth(aR(:,ii),5*winsize);
-% end
+% Smooth the gains we find.
+for ii = 1:size(aL,2)
+	fprintf('Smoothing track %i\n',ii);
+	aL(:,ii) = smooth(aL(:,ii),5*winsize);
+	aR(:,ii) = smooth(aR(:,ii),5*winsize);
+end
 
 
-% Do timealigned mixing
+% Do mixing
 yL = sum(aL.*xL, 2);
 yR = sum(aR.*xR, 2);
 
 
 
-% Redo timealignment
-K = size(xL,2);
-xL_align = zeros(size(xL));
-xR_align = zeros(size(xR));
-aL_align = zeros(size(aL));
-aR_align = zeros(size(aR));
-for ii = 1:K
-	mapL = 1:size(nL,1);
-	mapR = 1:size(nR,1);
-	ovflL = [find(nL(:,ii)<1); find(nL(:,ii)>mapL(end))];
-	ovflR = [find(nR(:,ii)<1); find(nR(:,ii)>mapR(end))];
+% % Redo timealignment
+% K = size(xL,2);
+% xL_align = zeros(size(xL));
+% xR_align = zeros(size(xR));
+% aL_align = zeros(size(aL));
+% aR_align = zeros(size(aR));
+% for ii = 1:K
+% 	mapL = 1:size(nL,1);
+% 	mapR = 1:size(nR,1);
+% 	ovflL = [find(nL(:,ii)<1); find(nL(:,ii)>mapL(end))];
+% 	ovflR = [find(nR(:,ii)<1); find(nR(:,ii)>mapR(end))];
 
-	mapL(ovflL) = [];
-	mapR(ovflR) = [];
-	nL_align = nL(:,ii);
-	nR_align = nR(:,ii);
-	nL_align(ovflL) = [];
-	nR_align(ovflR) = [];
-	xL_align(mapL) = xL(nL_align);
-	xR_align(mapR) = xR(nR_align);
-	aL_align(mapL) = aL(nL_align);
-	aR_align(mapR) = aR(nR_align);
-end
+% 	mapL(ovflL) = [];
+% 	mapR(ovflR) = [];
+% 	nL_align = nL(:,ii);
+% 	nR_align = nR(:,ii);
+% 	nL_align(ovflL) = [];
+% 	nR_align(ovflR) = [];
+% 	xL_align(mapL,ii) = xL(nL_align,ii);
+% 	xR_align(mapR,ii) = xR(nR_align,ii);
+% 	aL_align(mapL,ii) = aL(nL_align,ii);
+% 	aR_align(mapR,ii) = aR(nR_align,ii);
+% end
 
 
-% Do timealigned mixing
-yL_align = sum(aL_align.*xL_align, 2);
-yR_align = sum(aR_align.*xR_align, 2);
+% % Do timealigned mixing
+% yL_align = sum(aL_align.*xL_align, 2);
+% yR_align = sum(aR_align.*xR_align, 2);
 
 
 
@@ -73,5 +73,9 @@ figure(4);
 plot(time,tR, time,yR);
 
 
+% figure(5);
+% plot(time,tL, time,yL_align);
 
-audiowrite([DATA_PATH '/hotel_california/output/prediction.mp3'],[yL yR],fs);
+
+
+audiowrite([DATA_PATH '/hotel_california/output/prediction.wav'],[yL yR],fs);

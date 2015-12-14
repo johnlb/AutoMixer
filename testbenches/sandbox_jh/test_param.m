@@ -1,8 +1,10 @@
 run('../../always.m');
+clear test_param
 init_recording;
 [data_len, M] = size(x);
 len = 1024;
 for m = 1:M
+  fprintf('Doing STFT for Track %i\n', m);
   X(:,:,m) = STFT(x(1:1000000,m),len,len/2);
 end
 [K,N,M] = size(X);
@@ -56,8 +58,8 @@ coefficients2 = ones(1,40)/40;
 smoothplot2 = filter(coefficients2,1,abs(A1(1,:)));
 
 figure(13);
-semilogx(f,abs(A1(1,:)));
-hold all;
-%plot(f,abs(A1(1,:)));
-semilogx(f,smoothplot2);
-hold off;
+tracklist = [2 5 6 8];
+for ii = 1:length(tracklist)
+	subplot(length(tracklist)/2,2,ii);
+	semilogx(f,abs(A1(tracklist(ii),:)));
+end
