@@ -8,8 +8,8 @@ function [aL aR] = find_coeffs(xL,xR, yL,yR, ts, winSize, nwins_ta, interp_metho
 
 
 	N 		= size(xL,1);
-	K 		= size(xL,2);
-	Ethresh = 10;
+	K 		= size(xL,2);	% assumes equal number channels panned L & R
+	Ethresh = 40;
 
 	aL 		= zeros(N,K);
 	aR 		= zeros(N,K);
@@ -60,7 +60,7 @@ fprintf('Running time alignment...\n');
 
 fprintf('Caluclating RMS...\n');
 	% Calc RMS
-	rmswin = round(0.2e-3/ts);
+	rmswin = 16;
 
 	xL = ampl2rms(xL,rmswin);
 	xR = ampl2rms(xR,rmswin);
