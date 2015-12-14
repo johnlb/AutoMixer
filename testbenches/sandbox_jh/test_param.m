@@ -49,6 +49,15 @@ imagesc(abs(Y1(1:10,:)));
 subplot(212);
 imagesc(abs(X(1:10,:,1)));
 
+coefficients = ones(1,20)/20;
+smoothplot = filter(coefficients,1,abs(A1(1,:)));
+
+coefficients2 = ones(1,40)/40;
+smoothplot2 = filter(coefficients2,1,abs(A1(1,:)));
 
 figure(13);
-plot(f,abs(A1(1,:)));
+semilogx(f,abs(A1(1,:)));
+hold all;
+%plot(f,abs(A1(1,:)));
+semilogx(f,smoothplot2);
+hold off;

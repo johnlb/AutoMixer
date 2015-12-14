@@ -16,9 +16,17 @@ function A = mixparam(X,Y)
 [K,N,M] = size(X);
 A = ones(M,K);
 for k = 1:K
-  Xk = reshape(X(k,:,:),N,M);
-  Yk = Y(k,:);
-  A(:,k) = abs(Xk)\abs(Yk)';
+  Xk = abs(reshape(X(k,:,:),N,M));
+  Ex = sum(Xk,1);
+  Ex = Ex';
+  for m = 1:M
+      ptrs = Ex > 1;
+%       if (Ex(m,1)<100)
+%           Xk(:,m)=ones(N,1)*0.1;
+%       end
+  end
+  Yk = abs(Y(k,:)');
+  A(ptrs,k) = pinv(Xk(:,ptrs))*Yk;
 end
 
   
