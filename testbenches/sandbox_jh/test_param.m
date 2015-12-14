@@ -1,4 +1,4 @@
-always;
+run('../../always.m');
 init_recording;
 [data_len, M] = size(x);
 len = 1024;
