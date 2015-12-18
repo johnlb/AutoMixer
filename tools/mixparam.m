@@ -24,7 +24,8 @@ for k = 1:K
   Ex = sum(Xk,1);
   Ex = Ex';
   ptrs = Ex > .05;
-  
   Yk = abs(Y(k,:)');
+  size(Yk)
+  size(pinv(Xk(:,ptrs)))
   A(ptrs,k) = pinv(Xk(:,ptrs))*Yk;
 end

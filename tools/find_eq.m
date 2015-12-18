@@ -38,6 +38,8 @@ function [AL AR] = find_eq(xL,xR, tL,tR, ts)
 
 
 	% Smooth EQ curves
+
+%%%%%%%%%%%%% Do smoothing %%%%%%%%%%%%%%%%%%
 	fprintf('Smoothing frf\n');
 	AL = 20.*log10(abs(AL));
 	AR = 20.*log10(abs(AR));
@@ -46,18 +48,27 @@ function [AL AR] = find_eq(xL,xR, tL,tR, ts)
 		[AR(:,ii) AR_oct(:,ii)] = generate_smooth_tf(freq,AR(:,ii));
 	end
 
-
-
-
 	% Find FIR filter
 	AL_ = zeros(FFT_LEN,K);
 	AR_ = zeros(FFT_LEN,K);
 	for ii = 1:K
 		AL_(:,ii) = gain2fir(AL(:,ii),1);
 		AR_(:,ii) = gain2fir(AR(:,ii),1);
-		% AL(:,ii) = gain2fir(AL(:,ii),1);
-		% AR(:,ii) = gain2fir(AR(:,ii),1);
 	end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%% Don't Do smoothing %%%%%%%%%%%%%%%%%%
+	% % Find FIR filter
+	% AL_ = zeros(FFT_LEN,K);
+	% AR_ = zeros(FFT_LEN,K);
+	% for ii = 1:K
+	% 	AL_(:,ii) = gain2fir(AL(:,ii),0);
+	% 	AR_(:,ii) = gain2fir(AR(:,ii),0);
+	% end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	AL = AL_;
 	AR = AR_;

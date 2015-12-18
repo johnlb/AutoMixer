@@ -61,13 +61,13 @@ fprintf('Running time alignment...\n');
 
 
 
-fprintf('Caluclating RMS...\n');
-	% Calc RMS
-	xL = ampl2rms(xL,rmswin);
-	xR = ampl2rms(xR,rmswin);
+% fprintf('Caluclating RMS...\n');
+% 	% Calc RMS
+% 	xL = ampl2rms(xL,rmswin);
+% 	xR = ampl2rms(xR,rmswin);
 
-	yL = ampl2rms(yL,rmswin);
-	yR = ampl2rms(yR,rmswin);
+% 	yL = ampl2rms(yL,rmswin);
+% 	yR = ampl2rms(yR,rmswin);
 
 
 % save('./state/find_coeffs-rms.mat');

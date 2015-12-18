@@ -1,9 +1,10 @@
 %%% hello.
-clear main
+clear main_beth_rest
 
 
 run('./always.m');
-init_hotelcalifornia();
+rec_name = 'beth_rest';
+init_recording();
 
 
 
@@ -67,4 +68,4 @@ plot(time,tR, time,yR);
 
 
 
-audiowrite([DATA_PATH '/hotel_california/output/prediction.wav'],[yL yR],fs);
+audiowrite([DATA_PATH '/beth_rest/output/prediction.wav'],[yL yR],fs);
