@@ -1,1 +1,0 @@
-To run all programs, run mlp_run.m by typing mlp_run.
